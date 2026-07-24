@@ -1,180 +1,258 @@
-import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ExternalLink } from '@/components/external-link';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Collapsible } from '@/components/ui/collapsible';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { BottomTabInset, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-export default function TabTwoScreen() {
-  const safeAreaInsets = useSafeAreaInsets();
-  const insets = {
-    ...safeAreaInsets,
-    bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
-  };
-  const theme = useTheme();
+const BLUE_MID = '#208AEF';
+const BLUE_DARK = '#0274DF';
+const BLUE_LIGHT = '#3C9FFE';
 
-  const contentPlatformStyle = Platform.select({
-    android: {
-      paddingTop: insets.top,
-      paddingLeft: insets.left,
-      paddingRight: insets.right,
-      paddingBottom: insets.bottom,
-    },
-    web: {
-      paddingTop: Spacing.six,
-      paddingBottom: Spacing.four,
-    },
-  });
+const REPORT_ITEMS = [
+  { icon: '📅', label: 'Daily Report', desc: 'View today\'s full summary', accent: '#10B981' },
+  { icon: '📆', label: 'Weekly Report', desc: 'Last 7 days performance', accent: '#8B5CF6' },
+  { icon: '🗓️', label: 'Monthly Report', desc: 'Month-to-date overview', accent: '#F59E0B' },
+  { icon: '📉', label: 'Profit & Loss', desc: 'Revenue vs expenses', accent: '#EF4444' },
+  { icon: '🏆', label: 'Top Products', desc: 'Best selling items', accent: '#0EA5E9' },
+  { icon: '👥', label: 'Customer Trends', desc: 'Buyer patterns & loyalty', accent: '#EC4899' },
+] as const;
+
+export default function ReportsScreen() {
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const isDark = theme.background === '#000000';
 
   return (
     <ScrollView
-      style={[styles.scrollView, { backgroundColor: theme.background }]}
-      contentInset={insets}
-      contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
-      <ThemedView style={styles.container}>
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="subtitle">Explore</ThemedText>
-          <ThemedText style={styles.centerText} themeColor="textSecondary">
-            This starter app includes example{'\n'}code to help you get started.
-          </ThemedText>
+      style={[styles.scroll, { backgroundColor: theme.background }]}
+      contentContainerStyle={[
+        styles.content,
+        {
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom + BottomTabInset + Spacing.four,
+        },
+      ]}
+      showsVerticalScrollIndicator={false}>
 
-          <ExternalLink href="https://docs.expo.dev" asChild>
-            <Pressable style={({ pressed }) => pressed && styles.pressed}>
-              <ThemedView type="backgroundElement" style={styles.linkButton}>
-                <ThemedText type="link">Expo documentation</ThemedText>
-                <SymbolView
-                  tintColor={theme.text}
-                  name={{ ios: 'arrow.up.right.square', android: 'link', web: 'link' }}
-                  size={12}
-                />
-              </ThemedView>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={[styles.headerInner, { paddingTop: Spacing.four }]}>
+          <Text style={styles.headerTitle}>Reports</Text>
+          <Text style={styles.headerSub}>Sales intelligence & analytics</Text>
+        </View>
+      </View>
+
+      {/* Period selector */}
+      <View style={[styles.periodRow, { borderBottomColor: isDark ? '#1E293B' : '#E2E8F0' }]}>
+        {['Today', 'Week', 'Month', 'Year'].map((p, i) => (
+          <Pressable
+            key={p}
+            style={[
+              styles.periodBtn,
+              i === 0 && { backgroundColor: BLUE_MID, borderRadius: 20 },
+            ]}>
+            <Text
+              style={[
+                styles.periodLabel,
+                { color: i === 0 ? '#FFFFFF' : isDark ? '#94A3B8' : '#64748B' },
+              ]}>
+              {p}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+
+      {/* Summary cards */}
+      <View style={styles.summaryRow}>
+        <View style={[styles.summaryCard, { backgroundColor: isDark ? '#0F2744' : '#EFF6FF' }]}>
+          <Text style={[styles.summaryValue, { color: BLUE_MID }]}>₦0</Text>
+          <Text style={[styles.summaryLabel, { color: isDark ? '#94A3B8' : '#64748B' }]}>
+            Revenue
+          </Text>
+        </View>
+        <View style={[styles.summaryCard, { backgroundColor: isDark ? '#052e1c' : '#ECFDF5' }]}>
+          <Text style={[styles.summaryValue, { color: '#10B981' }]}>₦0</Text>
+          <Text style={[styles.summaryLabel, { color: isDark ? '#94A3B8' : '#64748B' }]}>
+            Profit
+          </Text>
+        </View>
+        <View style={[styles.summaryCard, { backgroundColor: isDark ? '#2a1f00' : '#FFFBEB' }]}>
+          <Text style={[styles.summaryValue, { color: '#F59E0B' }]}>0</Text>
+          <Text style={[styles.summaryLabel, { color: isDark ? '#94A3B8' : '#64748B' }]}>
+            Orders
+          </Text>
+        </View>
+      </View>
+
+      {/* Report list */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: isDark ? '#E2E8F0' : '#0F172A' }]}>
+          Report Types
+        </Text>
+
+        <View style={[styles.reportList, { backgroundColor: isDark ? '#0F172A' : '#F8FAFC', borderColor: isDark ? '#1E293B' : '#E2E8F0' }]}>
+          {REPORT_ITEMS.map((item, idx) => (
+            <Pressable
+              key={item.label}
+              style={({ pressed }) => [
+                styles.reportRow,
+                { opacity: pressed ? 0.7 : 1 },
+                idx < REPORT_ITEMS.length - 1 && {
+                  borderBottomWidth: 1,
+                  borderBottomColor: isDark ? '#1E293B' : '#E2E8F0',
+                },
+              ]}
+              android_ripple={{ color: item.accent + '22' }}>
+              <View style={[styles.reportIcon, { backgroundColor: item.accent + '20' }]}>
+                <Text style={styles.reportEmoji}>{item.icon}</Text>
+              </View>
+              <View style={styles.reportText}>
+                <Text style={[styles.reportLabel, { color: isDark ? '#F1F5F9' : '#0F172A' }]}>
+                  {item.label}
+                </Text>
+                <Text style={[styles.reportDesc, { color: isDark ? '#64748B' : '#94A3B8' }]}>
+                  {item.desc}
+                </Text>
+              </View>
+              <Text style={[styles.reportArrow, { color: item.accent }]}>›</Text>
             </Pressable>
-          </ExternalLink>
-        </ThemedView>
+          ))}
+        </View>
+      </View>
 
-        <ThemedView style={styles.sectionsWrapper}>
-          <Collapsible title="File-based routing">
-            <ThemedText type="small">
-              This app has two screens: <ThemedText type="code">src/app/index.tsx</ThemedText> and{' '}
-              <ThemedText type="code">src/app/explore.tsx</ThemedText>
-            </ThemedText>
-            <ThemedText type="small">
-              The layout file in <ThemedText type="code">src/app/_layout.tsx</ThemedText> sets up
-              the tab navigator.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/router/introduction">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Android, iOS, and web support">
-            <ThemedView type="backgroundElement" style={styles.collapsibleContent}>
-              <ThemedText type="small">
-                You can open this project on Android, iOS, and the web. To open the web version,
-                press <ThemedText type="smallBold">w</ThemedText> in the terminal running this
-                project.
-              </ThemedText>
-              <Image
-                source={require('@/assets/images/tutorial-web.png')}
-                style={styles.imageTutorial}
-              />
-            </ThemedView>
-          </Collapsible>
-
-          <Collapsible title="Images">
-            <ThemedText type="small">
-              For static images, you can use the <ThemedText type="code">@2x</ThemedText> and{' '}
-              <ThemedText type="code">@3x</ThemedText> suffixes to provide files for different
-              screen densities.
-            </ThemedText>
-            <Image source={require('@/assets/images/react-logo.png')} style={styles.imageReact} />
-            <ExternalLink href="https://reactnative.dev/docs/images">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Light and dark mode components">
-            <ThemedText type="small">
-              This template has light and dark mode support. The{' '}
-              <ThemedText type="code">useColorScheme()</ThemedText> hook lets you inspect what the
-              user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
-
-          <Collapsible title="Animations">
-            <ThemedText type="small">
-              This template includes an example of an animated component. The{' '}
-              <ThemedText type="code">src/components/ui/collapsible.tsx</ThemedText> component uses
-              the powerful <ThemedText type="code">react-native-reanimated</ThemedText> library to
-              animate opening this hint.
-            </ThemedText>
-          </Collapsible>
-        </ThemedView>
-        {Platform.OS === 'web' && <WebBadge />}
-      </ThemedView>
+      {/* Export banner */}
+      <View style={styles.exportBanner}>
+        <Text style={styles.exportEmoji}>📤</Text>
+        <View style={styles.exportText}>
+          <Text style={styles.exportTitle}>Export Reports</Text>
+          <Text style={styles.exportBody}>
+            Download as PDF or share via WhatsApp
+          </Text>
+        </View>
+        <Pressable style={styles.exportBtn}>
+          <Text style={styles.exportBtnLabel}>Export</Text>
+        </Pressable>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  contentContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  container: {
-    maxWidth: MaxContentWidth,
-    flexGrow: 1,
-  },
-  titleContainer: {
-    gap: Spacing.three,
-    alignItems: 'center',
+  scroll: { flex: 1 },
+  content: { gap: 0 },
+
+  header: {
+    // @ts-ignore
+    experimental_backgroundImage: `linear-gradient(160deg, ${BLUE_DARK} 0%, ${BLUE_MID} 60%, ${BLUE_LIGHT} 100%)`,
     paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.six,
+    paddingBottom: Spacing.four,
   },
-  centerText: {
-    textAlign: 'center',
+  headerInner: { gap: 4 },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
-  pressed: {
-    opacity: 0.7,
+  headerSub: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.75)',
+    fontWeight: '500',
   },
-  linkButton: {
+
+  periodRow: {
     flexDirection: 'row',
-    paddingHorizontal: Spacing.four,
+    paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
-    borderRadius: Spacing.five,
+    gap: Spacing.two,
+    borderBottomWidth: 1,
+  },
+  periodBtn: {
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one + 2,
+  },
+  periodLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+
+  summaryRow: {
+    flexDirection: 'row',
+    gap: Spacing.two,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.three,
+  },
+  summaryCard: {
+    flex: 1,
+    borderRadius: 14,
+    padding: Spacing.three,
+    alignItems: 'center',
+    gap: 4,
+  },
+  summaryValue: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  summaryLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+  },
+
+  section: {
+    paddingHorizontal: Spacing.three,
+    paddingBottom: Spacing.three,
+    gap: Spacing.two,
+  },
+  sectionTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    paddingHorizontal: Spacing.one,
+  },
+  reportList: {
+    borderRadius: 16,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  reportRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.three,
+    gap: Spacing.three,
+  },
+  reportIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.one,
+    flexShrink: 0,
+  },
+  reportEmoji: { fontSize: 20 },
+  reportText: { flex: 1, gap: 2 },
+  reportLabel: { fontSize: 14, fontWeight: '600' },
+  reportDesc: { fontSize: 12, fontWeight: '400' },
+  reportArrow: { fontSize: 22, fontWeight: '300', lineHeight: 26 },
+
+  exportBanner: {
+    marginHorizontal: Spacing.three,
+    marginBottom: Spacing.four,
+    // @ts-ignore
+    experimental_backgroundImage: `linear-gradient(135deg, ${BLUE_DARK}CC 0%, ${BLUE_MID}CC 100%)`,
+    borderRadius: 16,
+    padding: Spacing.three,
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: Spacing.three,
   },
-  sectionsWrapper: {
-    gap: Spacing.five,
-    paddingHorizontal: Spacing.four,
-    paddingTop: Spacing.three,
+  exportEmoji: { fontSize: 28 },
+  exportText: { flex: 1, gap: 4 },
+  exportTitle: { fontSize: 14, fontWeight: '700', color: '#FFFFFF' },
+  exportBody: { fontSize: 12, color: 'rgba(255,255,255,0.8)', lineHeight: 17 },
+  exportBtn: {
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.two,
+    borderRadius: 20,
   },
-  collapsibleContent: {
-    alignItems: 'center',
-  },
-  imageTutorial: {
-    width: '100%',
-    aspectRatio: 296 / 171,
-    borderRadius: Spacing.three,
-    marginTop: Spacing.two,
-  },
-  imageReact: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
-  },
+  exportBtnLabel: { fontSize: 13, fontWeight: '700', color: '#FFFFFF' },
 });
