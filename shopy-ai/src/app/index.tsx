@@ -6,6 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   useAnimatedStyle,
@@ -132,6 +133,7 @@ function FeatureCard({
 
   return (
     <Pressable
+      onPress={() => item.id === 'sales' && router.push('/sales')}
       style={({ pressed }) => [styles.card, { opacity: pressed ? 0.75 : 1 }]}
       android_ripple={{ color: item.accent + '33', borderless: false }}>
       <View style={[styles.cardInner, { backgroundColor: bg }]}>
@@ -246,7 +248,7 @@ export default function HomeScreen() {
           <PulseRing delay={900} />
 
           {/* Main voice button */}
-          <Pressable onPress={handleVoicePress}>
+        <Pressable onPress={() => router.push('/sales')}>
             <Animated.View style={[styles.voiceButton, voiceAnimStyle]}>
               <Text style={styles.voiceMic}>🎤</Text>
             </Animated.View>
