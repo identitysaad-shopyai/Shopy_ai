@@ -133,9 +133,20 @@ function FeatureCard({
 
   return (
     <Pressable
-      onPress={() => item.id === 'sales' && router.push('/sales')}
-      style={({ pressed }) => [styles.card, { opacity: pressed ? 0.75 : 1 }]}
-      android_ripple={{ color: item.accent + '33', borderless: false }}>
+  onPress={() => {
+    if (item.id === 'sales') router.push('/sales');
+    if (item.id === 'inventory') router.push('/inventory');
+    if (item.id === 'reports') router.push('/reports');
+    if (item.id === 'payments') router.push('/payments');
+    if (item.id === 'camera') router.push('/scanner');
+    if (item.id === 'analytics') router.push('/analytics');
+  }}
+  style={({ pressed }) => [
+    styles.card,
+    { opacity: pressed ? 0.75 : 1 },
+  ]}
+  android_ripple={{ color: item.accent + '33' }}
+>
       <View style={[styles.cardInner, { backgroundColor: bg }]}>
         <View style={[styles.iconCircle, { backgroundColor: item.accent + '22' }]}>
           <Text style={styles.iconEmoji}>{item.icon}</Text>
