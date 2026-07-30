@@ -12,6 +12,9 @@
     },
     "android": {
       "package": "com.shopyai.app",
+      "permissions": [
+  "RECORD_AUDIO"
+      ]
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -34,7 +37,8 @@
           "imageWidth": 76
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-speech-recognition"
     ],
     "experiments": {
       "typedRoutes": true,

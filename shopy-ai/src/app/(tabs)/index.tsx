@@ -6,6 +6,10 @@ import {
   Text,
   View,
 } from 'react-native';
+import {
+  ExpoSpeechRecognitionModule,
+  useSpeechRecognitionEvent,
+} from "expo-speech-recognition";
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
@@ -167,6 +171,7 @@ function FeatureCard({
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
 export default function HomeScreen() {
+  const [isListening, setIsListening] = useState(false);
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const isDark = theme.background === '#000000';
@@ -207,7 +212,35 @@ const loadDashboard = async () => {
     setTodaySales(total);
   }
 };
+const startListening = async () => {
+  try {
+    setIsListening(true);
 
+    await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+
+    await ExpoSpeechRecognitionModule.start({
+      lang: "en-US",
+      interimResults: true,
+      continuous: false,
+    });
+  } catch (error) {
+    console.log(error);
+    setIsListening(false);
+  }
+};
+  useSpeechRecognitionEvent("result", (event) => {
+  console.log(event);
+
+  setIsListening(false);
+
+  if (event.results?.[0]?.transcript) {
+    alert(event.results[0].transcript);
+  }
+});
+
+useSpeechRecognitionEvent("end", () => {
+  setIsListening(false);
+});
 // Voice button scale feedback
   const voiceScale = useSharedValue(1);
   const handleVoicePress = useCallback(() => {
@@ -284,7 +317,7 @@ const loadDashboard = async () => {
           <PulseRing delay={900} />
 
           {/* Main voice button */}
-        <Pressable onPress={() => router.push('/sales')}>
+        <Pressable onPress={startListening}>
             <Animated.View style={[styles.voiceButton, voiceAnimStyle]}>
               <Text style={styles.voiceMic}>🎤</Text>
             </Animated.View>
