@@ -23,7 +23,7 @@ import Animated, {
 
 import { BottomTabInset, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-
+import { ai } from "../../lib/gemini";
 // ─── Brand palette ───────────────────────────────────────────────────────────
 const BLUE_LIGHT = '#3C9FFE';
 const BLUE_MID = '#208AEF';
@@ -253,7 +253,19 @@ useSpeechRecognitionEvent("end", () => {
   const voiceAnimStyle = useAnimatedStyle(() => ({
     transform: [{ scale: voiceScale.value }],
   }));
+const testGemini = async () => {
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: "Hello Gemini, reply with one short sentence.",
+    });
 
+    alert(response.text);
+  } catch (error) {
+    console.log(error);
+    alert("Gemini error");
+  }
+};
   return (
     <ScrollView
       style={[styles.scroll, { backgroundColor: theme.background }]}
@@ -329,7 +341,13 @@ useSpeechRecognitionEvent("end", () => {
           Ask anything about your shop
         </Text>
       </View>
-
+<View style={{ marginTop: 20, alignItems: "center" }}>
+  <Pressable onPress={testGemini}>
+    <Text style={{ fontSize: 18 }}>
+      Test Gemini AI
+    </Text>
+  </Pressable>
+</View>
       {/* ── Quick actions grid ───────────────────────────────────────── */}
       <View style={styles.gridSection}>
         <Text style={[styles.sectionTitle, { color: isDark ? '#E2E8F0' : '#0F172A' }]}>
