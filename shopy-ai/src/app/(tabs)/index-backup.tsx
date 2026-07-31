@@ -6,18 +6,10 @@ import {
   Text,
   View,
 } from 'react-native';
-// DIAGNOSTIC: expo-speech-recognition disabled to isolate startup crash.
-// Re-enable by restoring the import below and removing the stubs.
-// import {
-//   ExpoSpeechRecognitionModule,
-//   useSpeechRecognitionEvent,
-// } from "expo-speech-recognition";
-const ExpoSpeechRecognitionModule = {
-  requestPermissionsAsync: async () => {},
-  start: async (_opts: Record<string, unknown>) => {},
-};
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const useSpeechRecognitionEvent = (_event: string, _handler: (...args: any[]) => void) => {};
+import {
+  ExpoSpeechRecognitionModule,
+  useSpeechRecognitionEvent,
+} from "expo-speech-recognition";
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
