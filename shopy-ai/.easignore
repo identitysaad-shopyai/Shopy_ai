@@ -1,4 +1,7 @@
-# Exclude React Native DevTools dotslash binary – downloaded at runtime,
-# not needed for the EAS cloud build, and causes permission errors during archive cleanup.
-node_modules/@react-native/debugger-shell/bin/react-native-devtools
-.cache/dotslash
+.cache
+.cache/**
+node_modules/.cache
+.expo
+.git
+**/React Native DevTools-linux-x64
+
